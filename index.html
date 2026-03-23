@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>EspañolApp</title>
+<meta name="theme-color" content="#1a0a2e"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Español"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root,[data-theme="dark"]{
+  --bg:#0e0718;--surface:#17102a;--card-bg:#1f1538;--cbf:#1a102e;--cbt:#251545;
+  --accent:#f0a500;--accent2:#e05c5c;--green:#4ecb71;--red:#e05c5c;--blue:#6495ed;
+  --text:#f0eaff;--tinv:#0e0718;--muted:#7d6fa0;--border:rgba(240,165,0,0.2);
+  --sh:0 8px 32px rgba(0,0,0,0.4);--input-bg:#17102a;
+}
+[data-theme="light"]{
+  --bg:#f5f0ff;--surface:#fff;--card-bg:#fff;--cbf:#f0e8ff;--cbt:#e8d8ff;
+  --accent:#c47f00;--accent2:#c0392b;--green:#27ae60;--red:#c0392b;--blue:#2563eb;
+  --text:#1a0a2e;--tinv:#fff;--muted:#8e7aaa;--border:rgba(196,127,0,0.25);
+  --sh:0 4px 24px rgba(0,0,0,0.1);--input-bg:#f5f0ff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{transition:background .3s,color .3s;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100dvh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw;background:radial-gradient(circle,rgba(240,165,0,0.06) 0%,transparent 65%);pointer-events:none;z-index:0;}
+.orb2{position:fixed;bottom:-15%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(224,92,92,0.05) 0%,transparent 65%);pointer-events:none;z-index:0;}
+.screen{position:relative;z-index:1;display:none;flex-direction:column;align-items:center;min-height:100dvh;padding:20px 16px;}
+.screen.active{display:flex;}
+
+/* THEME TOGGLE */
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:50;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:6px 12px;cursor:pointer;font-size:1rem;display:flex;align-items:center;gap:6px;box-shadow:var(--sh);transition:all .2s;}
+.theme-toggle:hover{border-color:var(--accent);}
+.theme-label{font-size:.7rem;color:var(--muted);font-weight:500;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 max(8px,env(safe-area-inset-bottom));backdrop-filter:blur(12px);}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;color:var(--muted);transition:all .2s;font-family:'DM Sans',sans-serif;}
+.nav-item.active{color:var(--accent);}
+.nav-item .nav-icon{font-size:1.3rem;}
+.nav-item .nav-label{font-size:.6rem;font-weight:500;letter-spacing:.04em;}
+
+/* HOME */
+#home{padding-top:44px;padding-bottom:80px;gap:0;}
+.home-header{text-align:center;width:100%;margin-bottom:20px;}
+.flag{font-size:2.6rem;margin-bottom:6px;}
+.app-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,7vw,3rem);font-weight:900;line-height:1;color:var(--text);}
+.app-title span{color:var(--accent);}
+.app-subtitle{margin-top:6px;color:var(--muted);font-size:.9rem;letter-spacing:.04em;}
+
+/* XP BAR */
+.xp-section{width:100%;max-width:380px;margin-bottom:16px;}
+.xp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.xp-level{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--accent);}
+.xp-pts{font-size:.72rem;color:var(--muted);}
+.xp-bar-bg{height:8px;background:var(--surface);border-radius:99px;overflow:hidden;border:1px solid var(--border);}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .6s cubic-bezier(.34,1.56,.64,1);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:380px;margin-bottom:14px;}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:var(--sh);}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--accent);}
+.stat-label{font-size:.65rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* CHART */
+.chart-section{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:var(--sh);}
+.chart-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px;}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:52px;}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;background:var(--border);transition:height .5s cubic-bezier(.34,1.56,.64,1);min-height:3px;}
+.chart-bar.has-data{background:linear-gradient(180deg,var(--accent),var(--accent2));}
+.chart-day{font-size:.58rem;color:var(--muted);}
+
+/* SRS BANNER */
+.srs-due-banner{width:100%;max-width:380px;margin-bottom:14px;background:linear-gradient(90deg,rgba(240,165,0,.1),rgba(224,92,92,.07));border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;}
+.srs-due-banner:hover{border-color:var(--accent);}
+.srs-due-icon{font-size:1.4rem;}
+.srs-due-text{flex:1;}
+.srs-due-title{font-size:.85rem;font-weight:600;}
+.srs-due-sub{font-size:.7rem;color:var(--muted);}
+.srs-due-count{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--accent);}
+
+/* CATEGORIES */
+.categories{width:100%;max-width:380px;}
+.cat-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:8px;}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.cat-btn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 12px;text-align:left;cursor:pointer;transition:all .2s;color:var(--text);box-shadow:var(--sh);}
+.cat-btn:hover,.cat-btn.selected{border-color:var(--accent);background:rgba(240,165,0,.08);}
+.cat-btn .cat-icon{font-size:1.4rem;margin-bottom:4px;}
+.cat-btn .cat-name{font-size:.8rem;font-weight:500;}
+.cat-btn .cat-count{font-size:.67rem;color:var(--muted);margin-top:2px;}
+
+.btn-primary{width:100%;max-width:380px;padding:16px;background:var(--accent);color:var(--tinv);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;border:none;border-radius:14px;cursor:pointer;transition:all .2s;letter-spacing:.04em;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(240,165,0,.3);}
+.btn-secondary{padding:14px;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.88rem;cursor:pointer;transition:all .2s;width:100%;}
+.btn-secondary:hover{border-color:var(--accent);}
+
+/* QUIZ */
+#quiz{justify-content:space-between;padding-top:16px;padding-bottom:16px;}
+.quiz-header{width:100%;max-width:400px;display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.btn-back{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px 11px;font-size:.82rem;cursor:pointer;transition:all .18s;white-space:nowrap;}
+.btn-back:hover{border-color:var(--accent);}
+.progress-wrap{flex:1;}
+.progress-label{font-size:.7rem;color:var(--muted);margin-bottom:3px;}
+.progress-bar{height:5px;background:var(--surface);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:width .4s ease;}
+.category-badge{font-size:.65rem;padding:4px 9px;border-radius:99px;border:1px solid var(--border);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+
+/* CARD */
+.srs-indicator{position:absolute;top:13px;right:13px;display:flex;gap:3px;z-index:2;}
+.srs-dot{width:6px;height:6px;border-radius:99px;background:var(--border);transition:background .3s;}
+.srs-dot.filled{background:var(--accent);}
+.card-scene{width:100%;max-width:400px;flex:1;display:flex;align-items:center;justify-content:center;perspective:1200px;cursor:pointer;}
+.card-3d{width:100%;max-width:360px;height:240px;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.2,.2,1);}
+.card-3d.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;border:1px solid var(--border);box-shadow:var(--sh);}
+.card-front{background:var(--card-bg);}
+.card-back{background:linear-gradient(135deg,var(--cbf) 0%,var(--cbt) 100%);transform:rotateY(180deg);border-color:rgba(240,165,0,.35);}
+.card-lang-tag{position:absolute;top:13px;left:13px;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);background:rgba(128,128,128,.08);padding:3px 7px;border-radius:99px;}
+.card-flip-hint{position:absolute;bottom:12px;right:12px;font-size:.62rem;color:var(--muted);}
+.card-word{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4.5vw,2rem);font-weight:700;text-align:center;line-height:1.2;color:var(--text);}
+.card-back .card-word{color:var(--accent);}
+.card-hint{margin-top:8px;font-size:.8rem;color:var(--muted);text-align:center;font-style:italic;}
+.card-example{margin-top:12px;font-size:.75rem;color:var(--muted);opacity:.65;text-align:center;line-height:1.5;font-style:italic;}
+
+/* AUDIO BTN */
+.audio-btn{position:absolute;bottom:12px;left:12px;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.25);color:var(--accent);border-radius:99px;padding:4px 10px;font-size:.72rem;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:4px;}
+.audio-btn:hover{background:rgba(240,165,0,.22);}
+.audio-btn.speaking{animation:pulse .6s infinite alternate;}
+@keyframes pulse{from{opacity:.6;}to{opacity:1;}}
+
+/* HALO GLOW on card */
+.card-3d.halo-green .card-front{box-shadow:0 0 0 3px rgba(78,203,113,.5),var(--sh);}
+.card-3d.halo-red   .card-front{box-shadow:0 0 0 3px rgba(224,92,92,.5),var(--sh);}
+
+/* MODE SWITCH */
+.mode-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:400px;margin-bottom:4px;}
+.mode-switch{display:flex;gap:5px;}
+.mode-switch button{background:none;border:1px solid var(--border);color:var(--muted);border-radius:99px;padding:3px 10px;font-size:.68rem;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;}
+.mode-switch button.active{border-color:var(--accent);color:var(--accent);background:rgba(240,165,0,.07);}
+.flip-hint{font-size:.75rem;color:var(--muted);text-align:center;}
+
+/* ANSWER BUTTONS */
+.card-actions{width:100%;max-width:400px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.card-actions.four-col{grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;}
+.btn-classic{padding:14px;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-dontknow{background:rgba(224,92,92,.12);color:var(--red);border:1px solid rgba(224,92,92,.25);}
+.btn-dontknow:hover{background:rgba(224,92,92,.22);transform:translateY(-2px);}
+.btn-know{background:rgba(78,203,113,.12);color:var(--green);border:1px solid rgba(78,203,113,.25);}
+.btn-know:hover{background:rgba(78,203,113,.22);transform:translateY(-2px);}
+.btn-answer{padding:11px 5px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.btn-answer .bi{font-size:1rem;}
+.btn-answer .biv{font-size:.6rem;opacity:.7;}
+.btn-again{background:rgba(224,92,92,.12);color:var(--red);border:1px solid rgba(224,92,92,.25);}
+.btn-again:hover{background:rgba(224,92,92,.22);transform:translateY(-2px);}
+.btn-hard{background:rgba(240,165,0,.1);color:#d4900a;border:1px solid rgba(240,165,0,.25);}
+.btn-hard:hover{background:rgba(240,165,0,.2);transform:translateY(-2px);}
+.btn-good{background:rgba(78,203,113,.12);color:var(--green);border:1px solid rgba(78,203,113,.25);}
+.btn-good:hover{background:rgba(78,203,113,.22);transform:translateY(-2px);}
+.btn-easy{background:rgba(100,149,237,.12);color:var(--blue);border:1px solid rgba(100,149,237,.25);}
+.btn-easy:hover{background:rgba(100,149,237,.22);transform:translateY(-2px);}
+
+/* TYPE MODE */
+.type-zone{width:100%;max-width:400px;margin-top:10px;}
+.type-input-wrap{position:relative;margin-bottom:8px;}
+.type-input{width:100%;background:var(--input-bg);border:2px solid var(--border);border-radius:14px;padding:14px 16px;color:var(--text);font-family:'Playfair Display',serif;font-size:1.2rem;outline:none;transition:border-color .2s;text-align:center;}
+.type-input:focus{border-color:var(--accent);}
+.type-input.correct{border-color:var(--green);background:rgba(78,203,113,.07);}
+.type-input.wrong{border-color:var(--red);background:rgba(224,92,92,.07);}
+.type-feedback{text-align:center;font-size:.82rem;padding:6px;border-radius:8px;min-height:30px;}
+.type-feedback.correct{color:var(--green);}
+.type-feedback.wrong{color:var(--red);}
+.btn-check{width:100%;padding:14px;background:var(--accent);color:var(--tinv);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;border:none;border-radius:14px;cursor:pointer;transition:all .2s;}
+.btn-check:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(240,165,0,.3);}
+
+/* RESULTS */
+#results{justify-content:center;text-align:center;gap:18px;padding-bottom:80px;}
+.result-emoji{font-size:3.5rem;}
+.result-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;}
+.result-score{font-size:3.5rem;font-family:'Playfair Display',serif;font-weight:700;color:var(--accent);}
+.result-sub{color:var(--muted);font-size:.88rem;}
+.result-breakdown{display:flex;gap:20px;justify-content:center;}
+.rb-item{text-align:center;}
+.rb-num{font-size:1.5rem;font-weight:700;}
+.rb-green{color:var(--green);}
+.rb-red{color:var(--red);}
+.rb-label{font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.result-btns{display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;}
+
+/* XP TOAST (badge earned) */
+.badge-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:linear-gradient(135deg,var(--surface),var(--card-bg));border:2px solid var(--accent);border-radius:20px;padding:16px 24px;z-index:300;transition:transform .4s cubic-bezier(.34,1.56,.64,1);text-align:center;box-shadow:0 8px 32px rgba(240,165,0,.3);min-width:220px;}
+.badge-toast.show{transform:translateX(-50%) translateY(0);}
+.badge-toast .bt-icon{font-size:2.2rem;}
+.badge-toast .bt-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--accent);margin-top:4px;}
+.badge-toast .bt-sub{font-size:.75rem;color:var(--muted);}
+
+/* NOTIF SCREEN */
+#notif-screen{justify-content:center;text-align:center;gap:20px;padding-bottom:80px;}
+.notif-icon{font-size:3rem;}
+.notif-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;}
+.notif-sub{color:var(--muted);font-size:.88rem;max-width:300px;line-height:1.6;}
+.notif-time-pick{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px;}
+.time-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1rem;outline:none;text-align:center;}
+.notif-status{font-size:.8rem;color:var(--muted);padding:8px 16px;background:var(--surface);border-radius:10px;border:1px solid var(--border);}
+
+/* ADD/MANAGE */
+#add-card{justify-content:flex-start;padding-top:24px;gap:0;padding-bottom:80px;}
+#manage-cards{justify-content:flex-start;padding-top:24px;padding-bottom:80px;}
+.screen-header{width:100%;max-width:400px;display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.screen-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;flex:1;}
+.form-section{width:100%;max-width:400px;margin-bottom:14px;}
+.form-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-select option{background:var(--surface);color:var(--text);}
+.form-textarea{resize:none;height:66px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-actions{width:100%;max-width:400px;display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--green);color:#0a1f12;font-weight:700;font-size:.83rem;padding:11px 18px;border-radius:12px;z-index:200;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.manage-list{width:100%;max-width:400px;display:flex;flex-direction:column;gap:7px;overflow-y:auto;flex:1;}
+.manage-empty{text-align:center;color:var(--muted);font-size:.88rem;margin-top:36px;}
+.manage-card-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.manage-card-text{flex:1;min-width:0;}
+.manage-card-fr{font-size:.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.manage-card-es{font-size:.75rem;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.manage-card-meta{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+.manage-card-srs{font-size:.62rem;color:var(--muted);margin-top:1px;}
+.btn-delete{background:rgba(224,92,92,.1);border:1px solid rgba(224,92,92,.2);color:var(--red);border-radius:8px;padding:5px 9px;cursor:pointer;font-size:.75rem;transition:all .18s;flex-shrink:0;}
+.btn-delete:hover{background:rgba(224,92,92,.25);}
+.manage-filter{width:100%;max-width:400px;margin-bottom:10px;}
+.home-bottom{width:100%;max-width:380px;display:flex;flex-direction:column;gap:7px;margin-top:4px;}
+.btn-add-card{width:100%;padding:13px;background:transparent;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-add-card:hover{border-color:var(--accent);background:rgba(240,165,0,.06);}
+#install-banner{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:10px;z-index:100;max-width:calc(100% - 32px);box-shadow:var(--sh);transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+#install-banner.show{transform:translateX(-50%) translateY(0);}
+.install-text{font-size:.8rem;}
+.install-text strong{color:var(--accent);}
+.btn-install{background:var(--accent);color:var(--tinv);border:none;border-radius:9px;padding:7px 13px;font-size:.77rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.btn-close-banner{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0;}
+
+/* BADGES SECTION */
+.badges-row{width:100%;max-width:380px;margin-bottom:14px;}
+.badges-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.badges-scroll::-webkit-scrollbar{display:none;}
+.badge-chip{flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:6px 12px;display:flex;align-items:center;gap:5px;font-size:.72rem;}
+.badge-chip.earned{border-color:var(--accent);background:rgba(240,165,0,.08);}
+.badge-chip .bc-icon{font-size:.9rem;}
+.badge-chip .bc-name{color:var(--text);font-weight:500;}
+.badge-chip.unearned .bc-icon,.badge-chip.unearned .bc-name{opacity:.35;}
+</style>
+</head>
+<body>
+<div class="orb2"></div>
+<button class="theme-toggle" onclick="toggleTheme()"><span id="theme-icon">🌙</span><span class="theme-label" id="theme-label">Sombre</span></button>
+
+<!-- ══ HOME ══════════════════════════════════════════════════════ -->
+<div id="home" class="screen active">
+  <div class="home-header">
+    <div class="flag">🇪🇸</div>
+    <div class="app-title">Español<span>App</span></div>
+    <div class="app-subtitle">Flashcards · B1–B2 · SRS</div>
+  </div>
+
+  <!-- XP bar -->
+  <div class="xp-section">
+    <div class="xp-header">
+      <span class="xp-level" id="xp-level-label">Niveau 1</span>
+      <span class="xp-pts" id="xp-pts-label">0 / 100 XP</span>
+    </div>
+    <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Cartes vues</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-streak">0</div><div class="stat-label">🔥 Jours</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-known">0</div><div class="stat-label">Maîtrisées</div></div>
+  </div>
+
+  <!-- Weekly chart -->
+  <div class="chart-section">
+    <div class="chart-title">📊 Activité — 7 derniers jours</div>
+    <div class="chart-bars" id="chart-bars"></div>
+  </div>
+
+  <!-- Badges -->
+  <div class="badges-row">
+    <div class="cat-title" style="margin-bottom:6px">🏅 Badges</div>
+    <div class="badges-scroll" id="badges-row"></div>
+  </div>
+
+  <!-- SRS banner -->
+  <div class="srs-due-banner" id="srs-banner" onclick="startSRSSession()" style="display:none">
+    <div class="srs-due-icon">🧠</div>
+    <div class="srs-due-text"><div class="srs-due-title">Révision du jour</div><div class="srs-due-sub">Cartes à revoir maintenant</div></div>
+    <div class="srs-due-count" id="srs-due-count">0</div>
+  </div>
+
+  <!-- Categories -->
+  <div class="categories">
+    <div class="cat-title">Choisir une catégorie</div>
+    <div class="cat-grid">
+      <button class="cat-btn selected" data-cat="all" onclick="selectCat(this)"><div class="cat-icon">🃏</div><div class="cat-name">Tout mélanger</div><div class="cat-count" id="count-all">—</div></button>
+      <button class="cat-btn" data-cat="vocab" onclick="selectCat(this)"><div class="cat-icon">📖</div><div class="cat-name">Vocabulaire</div><div class="cat-count" id="count-vocab">—</div></button>
+      <button class="cat-btn" data-cat="phrases" onclick="selectCat(this)"><div class="cat-icon">💬</div><div class="cat-name">Phrases quotidien</div><div class="cat-count" id="count-phrases">—</div></button>
+      <button class="cat-btn" data-cat="verbs" onclick="selectCat(this)"><div class="cat-icon">⚡</div><div class="cat-name">Verbes & conjugaison</div><div class="cat-count" id="count-verbs">—</div></button>
+      <button class="cat-btn" data-cat="expressions" onclick="selectCat(this)"><div class="cat-icon">✨</div><div class="cat-name">Expressions</div><div class="cat-count" id="count-expressions">—</div></button>
+    </div>
+  </div>
+
+  <div class="home-bottom">
+    <button class="btn-primary" onclick="startQuiz()">Commencer l'entraînement →</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+      <button class="btn-add-card" onclick="showScreen('add-card')">➕ Ajouter</button>
+      <button class="btn-add-card" onclick="openManage()">📋 Mes cartes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUIZ ══════════════════════════════════════════════════════ -->
+<div id="quiz" class="screen">
+  <div class="quiz-header">
+    <button class="btn-back" onclick="goHome()">← Retour</button>
+    <div class="progress-wrap">
+      <div class="progress-label" id="progress-label">1 / 20</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="category-badge" id="cat-badge">Tout</div>
+  </div>
+
+  <!-- Card -->
+  <div class="card-scene" id="card-scene" onclick="handleCardTap()">
+    <div class="card-3d" id="card-3d">
+      <div class="card-face card-front">
+        <div class="card-lang-tag" id="front-lang">Français</div>
+        <div class="srs-indicator" id="srs-dots"></div>
+        <div class="card-word" id="front-word">...</div>
+        <div class="card-hint" id="front-hint"></div>
+        <div class="card-flip-hint" id="flip-hint-text">Toucher pour retourner 🔄</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-lang-tag" id="back-lang">Espagnol</div>
+        <div class="card-word" id="back-word">...</div>
+        <div class="card-hint" id="back-hint"></div>
+        <div class="card-example" id="back-example"></div>
+        <button class="audio-btn" id="audio-btn-back" onclick="speakBack(event)">🔊 Écouter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Answer zone -->
+  <div style="width:100%;max-width:400px;">
+    <div class="mode-row">
+      <div class="mode-switch">
+        <button id="btn-mode-flip" class="active" onclick="setMode('flip')">🔄 Cartes</button>
+        <button id="btn-mode-type" onclick="setMode('type')">⌨️ Frappe</button>
+        <button id="btn-mode-srs" onclick="setMode('srs')">🧠 SRS</button>
+      </div>
+      <div class="flip-hint" id="flip-hint-bar">Touche la carte</div>
+    </div>
+
+    <!-- Flip mode buttons -->
+    <div class="card-actions" id="flip-btns">
+      <button class="btn-classic btn-dontknow" onclick="answer('again')">✕ Je ne sais pas</button>
+      <button class="btn-classic btn-know"     onclick="answer('good')">✓ Je sais !</button>
+    </div>
+
+    <!-- Type mode -->
+    <div class="type-zone" id="type-zone" style="display:none">
+      <div class="type-input-wrap">
+        <input class="type-input" id="type-input" type="text" placeholder="Tape ta réponse en espagnol…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+      </div>
+      <div class="type-feedback" id="type-feedback"></div>
+      <button class="btn-check" id="btn-check" onclick="checkType()">Vérifier →</button>
+    </div>
+
+    <!-- SRS buttons -->
+    <div class="card-actions four-col" id="srs-btns" style="display:none">
+      <button class="btn-answer btn-again" onclick="answer('again')"><span class="bi">✕</span><span>Raté</span><span class="biv" id="iv-again">—</span></button>
+      <button class="btn-answer btn-hard"  onclick="answer('hard')"> <span class="bi">😬</span><span>Dur</span><span class="biv" id="iv-hard">—</span></button>
+      <button class="btn-answer btn-good"  onclick="answer('good')"> <span class="bi">✓</span><span>Bien</span><span class="biv" id="iv-good">—</span></button>
+      <button class="btn-answer btn-easy"  onclick="answer('easy')"> <span class="bi">⚡</span><span>Facile</span><span class="biv" id="iv-easy">—</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ════════════════════════════════════════════════════ -->
+<div id="results" class="screen">
+  <div class="result-emoji" id="result-emoji">🎉</div>
+  <div><div class="result-title">Session terminée !</div><div class="result-sub" id="result-sub"></div></div>
+  <div class="result-score" id="result-score">0%</div>
+  <div id="xp-gained-label" style="color:var(--accent);font-size:.9rem;font-weight:600;"></div>
+  <div class="result-breakdown">
+    <div class="rb-item"><div class="rb-num rb-green" id="res-known">0</div><div class="rb-label">✓ Connues</div></div>
+    <div class="rb-item"><div class="rb-num rb-red"   id="res-unknown">0</div><div class="rb-label">✕ À revoir</div></div>
+  </div>
+  <div class="result-btns">
+    <button class="btn-primary" onclick="startQuiz()">🔄 Recommencer</button>
+    <button class="btn-secondary" onclick="reviewWrong()">Revoir les cartes ratées</button>
+    <button class="btn-secondary" onclick="goHome()">← Accueil</button>
+  </div>
+</div>
+
+<!-- ══ ADD CARD ═══════════════════════════════════════════════════ -->
+<div id="add-card" class="screen">
+  <div class="screen-header"><button class="btn-back" onclick="goHome()">← Retour</button><div class="screen-title">✏️ Nouvelle carte</div></div>
+  <div class="form-section"><label class="form-label">Catégorie</label><select class="form-select" id="new-cat"><option value="vocab">📖 Vocabulaire</option><option value="phrases">💬 Phrases quotidien</option><option value="verbs">⚡ Verbes & conjugaison</option><option value="expressions">✨ Expressions</option></select></div>
+  <div class="form-row form-section">
+    <div><label class="form-label">🇫🇷 Français</label><input class="form-input" id="new-fr" type="text" placeholder="le robinet" autocomplete="off"/></div>
+    <div><label class="form-label">🇪🇸 Espagnol</label><input class="form-input" id="new-es" type="text" placeholder="el grifo" autocomplete="off"/></div>
+  </div>
+  <div class="form-section"><label class="form-label">💡 Aide-mémoire <span style="color:var(--muted);font-size:.68rem">(optionnel)</span></label><input class="form-input" id="new-hint" type="text" placeholder="ex: Dans la salle de bain" autocomplete="off"/></div>
+  <div class="form-section"><label class="form-label">📝 Exemple <span style="color:var(--muted);font-size:.68rem">(optionnel)</span></label><textarea class="form-textarea" id="new-ex" placeholder="El grifo del baño gotea."></textarea></div>
+  <div class="form-actions"><button class="btn-primary" onclick="saveNewCard()">💾 Enregistrer</button><button class="btn-secondary" onclick="clearForm()">Effacer</button></div>
+</div>
+
+<!-- ══ MANAGE ═════════════════════════════════════════════════════ -->
+<div id="manage-cards" class="screen">
+  <div class="screen-header"><button class="btn-back" onclick="goHome()">← Retour</button><div class="screen-title">📋 Mes cartes</div></div>
+  <div class="manage-filter"><select class="form-select" id="manage-filter" onchange="renderManageList()"><option value="all">Toutes les catégories</option><option value="vocab">📖 Vocabulaire</option><option value="phrases">💬 Phrases</option><option value="verbs">⚡ Verbes</option><option value="expressions">✨ Expressions</option></select></div>
+  <div class="manage-list" id="manage-list"></div>
+</div>
+
+<!-- ══ NOTIFICATIONS ══════════════════════════════════════════════ -->
+<div id="notif-screen" class="screen">
+  <div class="notif-icon">🔔</div>
+  <div class="notif-title">Rappel quotidien</div>
+  <p class="notif-sub">Reçois une notification chaque jour à l'heure de ton choix pour ne jamais rater ta session.</p>
+  <div class="notif-time-pick">
+    <label class="form-label" style="text-align:center">Heure de rappel</label>
+    <input class="time-input" type="time" id="notif-time" value="08:00"/>
+    <button class="btn-primary" onclick="enableNotifs()">🔔 Activer les notifications</button>
+    <button class="btn-secondary" onclick="disableNotifs()">Désactiver</button>
+  </div>
+  <div class="notif-status" id="notif-status">Notifications : non configurées</div>
+  <button class="btn-secondary" style="max-width:300px" onclick="goHome()">← Retour</button>
+</div>
+
+<!-- ══ BOTTOM NAV ════════════════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="goHome()"><span class="nav-icon">🏠</span><span class="nav-label">Accueil</span></button>
+  <button class="nav-item" id="nav-play" onclick="startQuiz()"><span class="nav-icon">▶️</span><span class="nav-label">Jouer</span></button>
+  <button class="nav-item" id="nav-add" onclick="showScreen('add-card');setNav('nav-add')"><span class="nav-icon">➕</span><span class="nav-label">Ajouter</span></button>
+  <button class="nav-item" id="nav-notif" onclick="showScreen('notif-screen');setNav('nav-notif')"><span class="nav-icon">🔔</span><span class="nav-label">Rappel</span></button>
+</nav>
+
+<!-- Badge toast -->
+<div class="badge-toast" id="badge-toast">
+  <div class="bt-icon" id="bt-icon">🏆</div>
+  <div class="bt-title" id="bt-title">Badge débloqué !</div>
+  <div class="bt-sub" id="bt-sub"></div>
+</div>
+
+<!-- Install banner -->
+<div id="install-banner">
+  <div class="install-text">📱 <strong>Installer</strong> sur l'écran d'accueil</div>
+  <button class="btn-install" id="btn-install">Installer</button>
+  <button class="btn-close-banner" onclick="closeBanner()">✕</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════════
+const CARDS=[
+  {cat:"vocab",fr:"la mairie",es:"el ayuntamiento",hint:"Bâtiment administratif",ex:"El ayuntamiento está en el centro de la ciudad."},
+  {cat:"vocab",fr:"le carrefour",es:"el cruce / la intersección",hint:"Point de rencontre de rues",ex:"Gira a la izquierda en el cruce."},
+  {cat:"vocab",fr:"le bouchon (circulation)",es:"el atasco / el embotellamiento",hint:"Problème de trafic",ex:"Hay un atasco enorme en la autopista."},
+  {cat:"vocab",fr:"la poignée de main",es:"el apretón de manos",hint:"Geste de salutation",ex:"Le dio un apretón de manos muy firme."},
+  {cat:"vocab",fr:"la randonnée",es:"el senderismo / la caminata",hint:"Activité en pleine nature",ex:"Hacemos senderismo todos los fines de semana."},
+  {cat:"vocab",fr:"l'abonnement",es:"la suscripción",hint:"Accès régulier payant",ex:"Tengo una suscripción a Netflix."},
+  {cat:"vocab",fr:"le mode d'emploi",es:"las instrucciones / el manual de uso",hint:"Guide d'utilisation",ex:"Sigue las instrucciones del manual."},
+  {cat:"vocab",fr:"le robinet",es:"el grifo",hint:"Dans la salle de bain / cuisine",ex:"El grifo del baño gotea."},
+  {cat:"vocab",fr:"le grenier",es:"el desván / el ático",hint:"Espace en haut de la maison",ex:"Guardamos las cajas en el desván."},
+  {cat:"vocab",fr:"la foule",es:"la multitud / la muchedumbre",hint:"Beaucoup de personnes",ex:"Había una gran muchedumbre en la plaza."},
+  {cat:"vocab",fr:"l'avertissement",es:"la advertencia / el aviso",hint:"Mise en garde",ex:"Fue una clara advertencia del gobierno."},
+  {cat:"vocab",fr:"la tendance",es:"la tendencia / la moda",hint:"Ce qui est populaire",ex:"Esa tendencia llegó de las redes sociales."},
+  {cat:"phrases",fr:"Je n'en reviens pas !",es:"¡No me lo puedo creer!",hint:"Stupéfaction",ex:"¡No me lo puedo creer, ganamos!"},
+  {cat:"phrases",fr:"Peu importe / Ça m'est égal",es:"Me da igual / Da lo mismo",hint:"Indifférence",ex:"¿Café o té? – Me da igual."},
+  {cat:"phrases",fr:"Ça dépend",es:"Depende",hint:"Réponse nuancée",ex:"¿Vienes mañana? – Depende del trabajo."},
+  {cat:"phrases",fr:"De toute façon",es:"De todas formas / De todos modos",hint:"Quoi qu'il arrive",ex:"De todas formas, llegaremos tarde."},
+  {cat:"phrases",fr:"Il y a du monde",es:"Hay mucha gente",hint:"Endroit bondé",ex:"En el metro hay mucha gente a esta hora."},
+  {cat:"phrases",fr:"Avoir du mal à faire qqch",es:"Tener dificultades para / costarle a uno",hint:"Difficulté",ex:"Me cuesta mucho levantarme temprano."},
+  {cat:"phrases",fr:"Quelle coïncidence !",es:"¡Qué casualidad!",hint:"Surprise agréable",ex:"¡Qué casualidad encontrarte aquí!"},
+  {cat:"phrases",fr:"En tout cas / Quoi qu'il en soit",es:"En cualquier caso / Sea como sea",hint:"Transition argumentative",ex:"En cualquier caso, hay que decidir ya."},
+  {cat:"phrases",fr:"Être à court de quelque chose",es:"Quedarse sin algo",hint:"Manque de ressources",ex:"Nos hemos quedado sin leche."},
+  {cat:"phrases",fr:"Tant mieux / Tant pis",es:"Mejor así / Peor para él",hint:"Réaction à une situation",ex:"No viene Juan. – Peor para él."},
+  {cat:"verbs",fr:"Se souvenir de (yo/tú/él)",es:"Recordar: recuerdo/recuerdas/recuerda",hint:"Verbe à diphtongue o→ue",ex:"¿Recuerdas cuando éramos niños?"},
+  {cat:"verbs",fr:"Pouvoir (yo/tú/él)",es:"Poder: puedo/puedes/puede",hint:"Verbe modal irrégulier o→ue",ex:"No puedo venir esta tarde."},
+  {cat:"verbs",fr:"Vouloir (yo/tú/él)",es:"Querer: quiero/quieres/quiere",hint:"Verbe à diphtongue e→ie",ex:"Quiero aprender español."},
+  {cat:"verbs",fr:"Savoir (yo/tú/él)",es:"Saber: sé/sabes/sabe",hint:"yo irrégulier : sé",ex:"Sé hablar francés y un poco de inglés."},
+  {cat:"verbs",fr:"Mettre / Poser (yo/tú/él)",es:"Poner: pongo/pones/pone",hint:"yo irrégulier : pongo",ex:"Pon la mesa, por favor."},
+  {cat:"verbs",fr:"Sortir / Partir (yo/tú/él)",es:"Salir: salgo/sales/sale",hint:"yo irrégulier : salgo",ex:"Salgo del trabajo a las seis."},
+  {cat:"verbs",fr:"Avoir (haber) au subjonctif présent",es:"haya/hayas/haya/hayamos/hayáis/hayan",hint:"Base du subjonctif passé",ex:"Espero que hayas llegado bien."},
+  {cat:"verbs",fr:"Être (ser) au passé simple",es:"fui/fuiste/fue/fuimos/fuisteis/fueron",hint:"Ser et Ir ont les mêmes formes!",ex:"Fue un viaje increíble."},
+  {cat:"verbs",fr:"Aller (yo/tú/él) au présent",es:"Ir: voy/vas/va",hint:"Totalement irrégulier",ex:"Voy al gimnasio cada día."},
+  {cat:"verbs",fr:"Tenir / Avoir (yo/tú/él)",es:"Tener: tengo/tienes/tiene",hint:"yo irrégulier: tengo",ex:"Tengo mucho trabajo esta semana."},
+  {cat:"verbs",fr:"Dire (yo/tú/él)",es:"Decir: digo/dices/dice",hint:"yo irrégulier: digo",ex:"Siempre dice la verdad."},
+  {cat:"verbs",fr:"Venir (yo/tú/él)",es:"Venir: vengo/vienes/viene",hint:"yo irrégulier: vengo",ex:"¿Vienes con nosotros esta tarde?"},
+  {cat:"expressions",fr:"Être dans la lune / distrait",es:"Estar en las nubes",hint:"Manque d'attention",ex:"Siempre está en las nubes en clase."},
+  {cat:"expressions",fr:"Coûter les yeux de la tête",es:"Costar un ojo de la cara",hint:"Très cher",ex:"Ese coche cuesta un ojo de la cara."},
+  {cat:"expressions",fr:"Avoir le cafard",es:"Estar de bajón / Tener el ánimo por los suelos",hint:"Se sentir déprimé",ex:"Esta semana estoy bastante de bajón."},
+  {cat:"expressions",fr:"Prendre le taureau par les cornes",es:"Coger el toro por los cuernos",hint:"Affronter directement un problème",ex:"Es hora de coger el toro por los cuernos."},
+  {cat:"expressions",fr:"Tourner autour du pot",es:"Andar con rodeos",hint:"Ne pas aller droit au but",ex:"Deja de andar con rodeos y dime la verdad."},
+  {cat:"expressions",fr:"Il ne faut pas vendre la peau de l'ours",es:"No hay que vender la piel del oso antes de cazarlo",hint:"Prudence avant victoire",ex:"No cuentes con ese dinero todavía."},
+  {cat:"expressions",fr:"D'une pierre deux coups",es:"Matar dos pájaros de un tiro",hint:"Efficacité double",ex:"Mato dos pájaros de un tiro."},
+  {cat:"expressions",fr:"Être sur les nerfs / stressé",es:"Estar con los nervios de punta",hint:"Tension, anxiété",ex:"Antes del examen estaba con los nervios de punta."},
+  {cat:"expressions",fr:"Il n'y a pas de fumée sans feu",es:"Cuando el río suena, agua lleva",hint:"Rumeur souvent fondée",ex:"Dicen que van a cerrar la empresa."},
+  {cat:"expressions",fr:"Avoir le cœur sur la main",es:"Ser muy generoso / dar la camisa",hint:"Générosité extrême",ex:"María daría la camisa a quien la necesite."},
+];
+
+// ══════════════════════════════════════════════════════════════════
+// BADGES DEFINITION
+// ══════════════════════════════════════════════════════════════════
+const BADGE_DEFS=[
+  {id:'first',icon:'🎯',name:'Premier pas',desc:'Première carte réussie',check:s=>s.known>=1},
+  {id:'ten',icon:'⭐',name:'Débutant',desc:'10 cartes maîtrisées',check:s=>s.known>=10},
+  {id:'fifty',icon:'🌟',name:'Intermédiaire',desc:'50 cartes maîtrisées',check:s=>s.known>=50},
+  {id:'century',icon:'💯',name:'Centurion',desc:'100 cartes maîtrisées',check:s=>s.known>=100},
+  {id:'streak3',icon:'🔥',name:'En feu',desc:'3 jours de suite',check:s=>s.streak>=3},
+  {id:'streak7',icon:'🏅',name:'Semaine complète',desc:'7 jours de suite',check:s=>s.streak>=7},
+  {id:'streak30',icon:'🏆',name:'Un mois !',desc:'30 jours de suite',check:s=>s.streak>=30},
+  {id:'typist',icon:'⌨️',name:'Typographe',desc:'10 bonnes réponses tapées',check:s=>s.typeCorrect>=10},
+  {id:'perfect',icon:'💎',name:'Parfait',desc:'Session 100% réussie',check:s=>s.perfectSessions>=1},
+];
+
+// ══════════════════════════════════════════════════════════════════
+// SRS
+// ══════════════════════════════════════════════════════════════════
+const DAY=86400000;
+function cKey(c){try{return btoa(unescape(encodeURIComponent(c.fr))).slice(0,20);}catch(e){return c.fr.slice(0,20);}}
+function isDue(d){if(!d||!d.dueDate)return true;return new Date(d.dueDate).getTime()<=Date.now();}
+function daysLeft(d){if(!d||!d.dueDate)return 0;return Math.ceil((new Date(d.dueDate).getTime()-Date.now())/DAY);}
+function fmtD(n){if(n<=0)return'maintenant';if(n===1)return'1j';if(n<7)return n+'j';if(n<30)return Math.round(n/7)+'sem';return Math.round(n/30)+'mois';}
+function nextSRS(d,r){
+  let{interval=1,easeFactor=2.5,level=0}=d||{};
+  const q={again:0,hard:1,good:2,easy:3}[r];
+  if(q===0){interval=1;level=0;easeFactor=Math.max(1.3,easeFactor-.2);}
+  else{
+    level++;
+    if(level===1)interval=1;else if(level===2)interval=3;else interval=Math.round(interval*easeFactor);
+    if(q===1){interval=Math.max(1,Math.round(interval*.7));easeFactor=Math.max(1.3,easeFactor-.15);}
+    if(q===3){interval=Math.round(interval*1.3);easeFactor=Math.min(2.5,easeFactor+.1);}
+  }
+  return{interval,easeFactor,level,dueDate:new Date(Date.now()+interval*DAY).toISOString().slice(0,10)};
+}
+let srsData={};
+function loadSRS(){const s=localStorage.getItem('srs3');if(s)srsData=JSON.parse(s);}
+function saveSRS(){localStorage.setItem('srs3',JSON.stringify(srsData));}
+function getDue(pool){return pool.filter(c=>isDue(srsData[cKey(c)]));}
+function getLevel(c){return(srsData[cKey(c)]||{}).level||0;}
+
+// ══════════════════════════════════════════════════════════════════
+// XP & GAMIFICATION
+// ══════════════════════════════════════════════════════════════════
+const XP_PER_LEVEL=[0,100,250,450,700,1000,1400,1900,2500,3200,4000];
+function xpForLevel(lv){return XP_PER_LEVEL[Math.min(lv,XP_PER_LEVEL.length-1)];}
+function getCurrentLevel(xp){
+  let lv=1;
+  for(let i=1;i<XP_PER_LEVEL.length;i++){if(xp>=XP_PER_LEVEL[i])lv=i+1;else break;}
+  return lv;
+}
+function renderXP(){
+  const xp=S.stats.xp||0;
+  const lv=getCurrentLevel(xp);
+  const floor=xpForLevel(lv-1);
+  const ceil=xpForLevel(lv);
+  const pct=ceil>floor?Math.round((xp-floor)/(ceil-floor)*100):100;
+  document.getElementById('xp-level-label').textContent='Niveau '+lv;
+  document.getElementById('xp-pts-label').textContent=(xp-floor)+' / '+(ceil-floor)+' XP';
+  document.getElementById('xp-bar').style.width=pct+'%';
+}
+function addXP(n){
+  const before=getCurrentLevel(S.stats.xp||0);
+  S.stats.xp=(S.stats.xp||0)+n;
+  const after=getCurrentLevel(S.stats.xp);
+  saveStats();
+  if(after>before)showBadgeToast('🎉','Niveau '+after+' atteint !','Tu progresses vite !');
+  renderXP();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════
+let S={
+  deck:[],idx:0,known:0,unknown:0,flipped:false,wrong:[],cat:'all',
+  mode:'flip', // flip | type | srs
+  typeAnswered:false,
+  currentFrontIsES:false,
+  stats:{total:0,known:0,streak:0,lastDate:'',xp:0,typeCorrect:0,perfectSessions:0,
+         badges:[],activity:{}} // activity: {YYYY-MM-DD: count}
+};
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+function init(){
+  loadSRS();loadCustomCards();loadStats();
+  updateCounts();renderStats();renderXP();
+  renderChart();renderBadges();updateSRSBanner();
+  renderNotifStatus();
+  checkScheduledNotif();
+}
+function loadStats(){
+  const s=localStorage.getItem('stats3');if(s)S.stats=JSON.parse(s);
+  if(!S.stats.activity)S.stats.activity={};
+  if(!S.stats.badges)S.stats.badges=[];
+  const today=new Date().toDateString();
+  if(S.stats.lastDate!==today){
+    const yest=new Date(Date.now()-DAY).toDateString();
+    S.stats.streak=S.stats.lastDate===yest?S.stats.streak+1:1;
+    S.stats.lastDate=today;saveStats();
+  }
+}
+function saveStats(){localStorage.setItem('stats3',JSON.stringify(S.stats));}
+function renderStats(){
+  document.getElementById('stat-total').textContent=S.stats.total||0;
+  document.getElementById('stat-streak').textContent=S.stats.streak||0;
+  document.getElementById('stat-known').textContent=S.stats.known||0;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CHART
+// ══════════════════════════════════════════════════════════════════
+function renderChart(){
+  const bars=document.getElementById('chart-bars');
+  const days=['D','L','M','M','J','V','S'];
+  const today=new Date();
+  let html='';
+  let maxVal=1;
+  const vals=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(today.getTime()-i*DAY);
+    const key=d.toISOString().slice(0,10);
+    const v=S.stats.activity[key]||0;
+    vals.push({v,day:days[d.getDay()],isToday:i===0});
+    if(v>maxVal)maxVal=v;
+  }
+  vals.forEach(({v,day,isToday})=>{
+    const h=v>0?Math.max(6,Math.round(v/maxVal*46)):3;
+    html+=`<div class="chart-col">
+      <div class="chart-bar ${v>0?'has-data':''}" style="height:${h}px" title="${v} cartes"></div>
+      <div class="chart-day" style="${isToday?'color:var(--accent);font-weight:700':''}">${day}</div>
+    </div>`;
+  });
+  bars.innerHTML=html;
+}
+function logActivity(){
+  const key=new Date().toISOString().slice(0,10);
+  S.stats.activity[key]=(S.stats.activity[key]||0)+1;
+  saveStats();renderChart();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// BADGES
+// ══════════════════════════════════════════════════════════════════
+function checkBadges(){
+  BADGE_DEFS.forEach(b=>{
+    if(!S.stats.badges.includes(b.id)&&b.check(S.stats)){
+      S.stats.badges.push(b.id);saveStats();
+      showBadgeToast(b.icon,b.name,b.desc);
+    }
+  });
+}
+function renderBadges(){
+  const row=document.getElementById('badges-row');
+  row.innerHTML=BADGE_DEFS.map(b=>{
+    const earned=S.stats.badges.includes(b.id);
+    return`<div class="badge-chip ${earned?'earned':'unearned'}" title="${b.desc}">
+      <span class="bc-icon">${b.icon}</span><span class="bc-name">${b.name}</span>
+    </div>`;
+  }).join('');
+}
+function showBadgeToast(icon,title,sub){
+  const t=document.getElementById('badge-toast');
+  document.getElementById('bt-icon').textContent=icon;
+  document.getElementById('bt-title').textContent=title;
+  document.getElementById('bt-sub').textContent=sub;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════════════════════════════
+function toggleTheme(){
+  const h=document.documentElement;
+  const nxt=h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme',nxt);
+  document.getElementById('theme-icon').textContent=nxt==='dark'?'🌙':'☀️';
+  document.getElementById('theme-label').textContent=nxt==='dark'?'Sombre':'Clair';
+  localStorage.setItem('theme3',nxt);
+}
+function loadTheme(){
+  const t=localStorage.getItem('theme3')||'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('theme-icon').textContent=t==='dark'?'🌙':'☀️';
+  document.getElementById('theme-label').textContent=t==='dark'?'Sombre':'Clair';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// AUDIO (Text-to-Speech)
+// ══════════════════════════════════════════════════════════════════
+let currentESText='';
+function speak(text){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='es-ES';u.rate=0.9;u.pitch=1;
+  const btn=document.getElementById('audio-btn-back');
+  if(btn){btn.classList.add('speaking');u.onend=()=>btn.classList.remove('speaking');}
+  window.speechSynthesis.speak(u);
+}
+function speakBack(e){e.stopPropagation();speak(currentESText);}
+
+// ══════════════════════════════════════════════════════════════════
+// MODE
+// ══════════════════════════════════════════════════════════════════
+function setMode(m){
+  S.mode=m;
+  ['flip','type','srs'].forEach(x=>{
+    document.getElementById('btn-mode-'+x).classList.toggle('active',x===m);
+  });
+  document.getElementById('flip-btns').style.display=m==='flip'?'grid':'none';
+  document.getElementById('type-zone').style.display=m==='type'?'block':'none';
+  document.getElementById('srs-btns').style.display=m==='srs'?'grid':'none';
+  // card tappable only in flip/srs
+  document.getElementById('card-scene').style.cursor=m==='type'?'default':'pointer';
+  if(m==='type'){resetTypeZone();}
+  if(m==='srs')updateIntervals();
+}
+function updateIntervals(){
+  if(!S.deck.length)return;
+  const d=srsData[cKey(S.deck[S.idx])];
+  ['again','hard','good','easy'].forEach(r=>{
+    const el=document.getElementById('iv-'+r);
+    if(el)el.textContent=fmtD(nextSRS(d,r).interval);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// CATEGORY & SRS BANNER
+// ══════════════════════════════════════════════════════════════════
+function selectCat(btn){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');S.cat=btn.dataset.cat;
+}
+function updateCounts(){
+  const cnt={all:CARDS.length};
+  ['vocab','phrases','verbs','expressions'].forEach(c=>cnt[c]=CARDS.filter(x=>x.cat===c).length);
+  document.getElementById('count-all').textContent=cnt.all+' cartes';
+  document.getElementById('count-vocab').textContent=cnt.vocab+' cartes';
+  document.getElementById('count-phrases').textContent=cnt.phrases+' cartes';
+  document.getElementById('count-verbs').textContent=cnt.verbs+' cartes';
+  document.getElementById('count-expressions').textContent=cnt.expressions+' cartes';
+}
+function updateSRSBanner(){
+  const n=getDue(CARDS).length;
+  document.getElementById('srs-due-count').textContent=n;
+  document.getElementById('srs-banner').style.display=n>0?'flex':'none';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════════════════════════════
+function startQuiz(rev=false){
+  let pool;
+  if(rev&&S.wrong.length)pool=[...S.wrong];
+  else pool=(S.cat==='all'?[...CARDS]:CARDS.filter(c=>c.cat===S.cat)).sort(()=>Math.random()-.5).slice(0,20);
+  const label=rev?'Révision':{all:'Tout',vocab:'Vocabulaire',phrases:'Phrases',verbs:'Verbes',expressions:'Expressions'}[S.cat];
+  launch(pool,label);
+  setNav('nav-play');
+}
+function startSRSSession(){
+  const due=getDue(CARDS);
+  if(!due.length){showToast('✅ Rien à réviser aujourd\'hui !');return;}
+  setMode('srs');
+  launch(due.sort(()=>Math.random()-.5).slice(0,30),'🧠 SRS');
+  setNav('nav-play');
+}
+function launch(pool,label){
+  Object.assign(S,{deck:pool,idx:0,known:0,unknown:0,wrong:[],flipped:false,typeAnswered:false});
+  showScreen('quiz');
+  document.getElementById('cat-badge').textContent=label;
+  renderCard();updateProgress();
+}
+
+function renderCard(){
+  const c=S.deck[S.idx];
+  const showFR=Math.random()>.5;
+  S.currentFrontIsES=!showFR;
+  const frontTxt=showFR?c.fr:c.es;
+  const backTxt=showFR?c.es:c.fr;
+  currentESText=showFR?c.es:c.fr; // always ES for audio
+
+  document.getElementById('front-word').textContent=frontTxt;
+  document.getElementById('front-lang').textContent=showFR?'🇫🇷 Français':'🇪🇸 Español';
+  document.getElementById('front-hint').textContent='';
+  document.getElementById('back-word').textContent=backTxt;
+  document.getElementById('back-lang').textContent=showFR?'🇪🇸 Español':'🇫🇷 Français';
+  document.getElementById('back-hint').textContent=c.hint||'';
+  document.getElementById('back-example').textContent=c.ex||'';
+
+  // SRS dots
+  const lv=getLevel(c);
+  document.getElementById('srs-dots').innerHTML=
+    Array.from({length:5},(_,i)=>`<div class="srs-dot ${i<lv?'filled':''}"></div>`).join('');
+
+  const el=document.getElementById('card-3d');
+  el.classList.remove('flipped','halo-green','halo-red');
+  S.flipped=false;S.typeAnswered=false;
+  document.getElementById('flip-hint-bar').textContent='Touche la carte';
+  document.getElementById('flip-hint-text').textContent='Toucher pour retourner 🔄';
+
+  if(S.mode==='type')resetTypeZone();
+  if(S.mode==='srs')updateIntervals();
+}
+
+function handleCardTap(){
+  if(S.mode==='type')return;
+  flipCard();
+}
+
+function flipCard(){
+  const el=document.getElementById('card-3d');
+  el.classList.toggle('flipped');
+  S.flipped=!S.flipped;
+  document.getElementById('flip-hint-bar').textContent=S.flipped?'Ta réponse ?':'Touche la carte';
+  document.getElementById('flip-hint-text').textContent=S.flipped?'':'Toucher pour retourner 🔄';
+  if(S.flipped&&S.mode==='srs')updateIntervals();
+  if(S.flipped&&window.speechSynthesis)speak(currentESText);
+}
+
+// ── TYPE MODE ────────────────────────────────────────────────────
+function resetTypeZone(){
+  const inp=document.getElementById('type-input');
+  inp.value='';inp.className='type-input';inp.disabled=false;
+  document.getElementById('type-feedback').textContent='';
+  document.getElementById('type-feedback').className='type-feedback';
+  document.getElementById('btn-check').textContent='Vérifier →';
+  document.getElementById('btn-check').onclick=checkType;
+  inp.focus();
+}
+
+function normalizeStr(s){
+  return s.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[¡!¿?.,;:]/g,'')
+    .trim();
+}
+
+function checkType(){
+  const c=S.deck[S.idx];
+  const inp=document.getElementById('type-input');
+  const typed=normalizeStr(inp.value);
+  // Target = ES side (shown on back)
+  const target=S.currentFrontIsES?c.fr:c.es;
+  const correct=normalizeStr(target);
+  const fb=document.getElementById('type-feedback');
+  const card=document.getElementById('card-3d');
+
+  // Allow partial match for long answers (first word or 70% similarity)
+  const isCorrect=typed===correct||typed.includes(correct.split(' ')[0])&&correct.split(' ')[0].length>3;
+
+  inp.disabled=true;
+  S.typeAnswered=true;
+
+  if(isCorrect){
+    inp.className='type-input correct';
+    fb.textContent='✓ Bravo ! '+target;
+    fb.className='type-feedback correct';
+    card.classList.add('halo-green');
+    S.stats.typeCorrect=(S.stats.typeCorrect||0)+1;
+    document.getElementById('btn-check').textContent='→ Carte suivante';
+    document.getElementById('btn-check').onclick=()=>answer('good');
+  } else {
+    inp.className='type-input wrong';
+    fb.textContent='✗ La réponse était : '+target;
+    fb.className='type-feedback wrong';
+    card.classList.add('halo-red');
+    document.getElementById('btn-check').textContent='→ Carte suivante';
+    document.getElementById('btn-check').onclick=()=>answer('again');
+  }
+  // Also flip card to show back
+  if(!S.flipped){
+    document.getElementById('card-3d').classList.add('flipped');
+    S.flipped=true;
+  }
+}
+
+// ── ANSWER ───────────────────────────────────────────────────────
+function answer(r){
+  if(S.mode==='flip'&&!S.flipped){flipCard();return;}
+  if(S.mode==='srs'&&!S.flipped){flipCard();return;}
+  const c=S.deck[S.idx];const k=cKey(c);
+  srsData[k]=nextSRS(srsData[k],r);saveSRS();
+  const knew=r==='good'||r==='easy';
+  if(knew){S.known++;S.stats.known++;}else{S.unknown++;S.wrong.push(c);}
+  S.stats.total++;logActivity();
+  const xpEarned=knew?(r==='easy'?15:10):3;
+  addXP(xpEarned);
+  checkBadges();renderBadges();renderStats();
+
+  S.idx++;
+  if(S.idx>=S.deck.length)showResults();
+  else{renderCard();updateProgress();}
+}
+
+function updateProgress(){
+  const pct=(S.idx/S.deck.length)*100;
+  document.getElementById('progress-label').textContent=`${S.idx+1} / ${S.deck.length}`;
+  document.getElementById('progress-fill').style.width=pct+'%';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// RESULTS
+// ══════════════════════════════════════════════════════════════════
+function showResults(){
+  showScreen('results');setNav('nav-home');
+  const t=S.known+S.unknown,p=t>0?Math.round(S.known/t*100):0;
+  if(p===100){S.stats.perfectSessions=(S.stats.perfectSessions||0)+1;saveStats();checkBadges();renderBadges();}
+  document.getElementById('result-emoji').textContent=p>=90?'🏆':p>=70?'🌟':p>=50?'💪':'😅';
+  document.getElementById('result-score').textContent=p+'%';
+  document.getElementById('res-known').textContent=S.known;
+  document.getElementById('res-unknown').textContent=S.unknown;
+  document.getElementById('result-sub').textContent=t+' cartes · continue comme ça !';
+  document.getElementById('xp-gained-label').textContent='+XP gagnés cette session !';
+  document.getElementById('progress-fill').style.width='100%';
+  updateSRSBanner();
+}
+function reviewWrong(){if(S.wrong.length)startQuiz(true);}
+
+// ══════════════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════════════════
+function renderNotifStatus(){
+  const cfg=localStorage.getItem('notif_cfg');
+  const el=document.getElementById('notif-status');
+  if(!el)return;
+  if(!('Notification' in window)){el.textContent='⚠️ Notifications non supportées sur ce navigateur';return;}
+  if(cfg){
+    const{time}=JSON.parse(cfg);
+    el.textContent=`✅ Rappel activé à ${time} chaque jour`;
+    document.getElementById('notif-time').value=time;
+  } else {
+    el.textContent='🔕 Aucun rappel configuré';
+  }
+}
+
+async function enableNotifs(){
+  if(!('Notification' in window)){showToast('⚠️ Non supporté sur ce navigateur','#e05c5c');return;}
+  const perm=await Notification.requestPermission();
+  if(perm!=='granted'){showToast('⚠️ Permission refusée','#e05c5c');return;}
+  const time=document.getElementById('notif-time').value||'08:00';
+  localStorage.setItem('notif_cfg',JSON.stringify({time,enabled:true}));
+  showToast('✅ Rappel activé à '+time);
+  renderNotifStatus();
+  scheduleNextNotif(time);
+}
+
+function disableNotifs(){
+  localStorage.removeItem('notif_cfg');
+  renderNotifStatus();
+  showToast('🔕 Rappel désactivé');
+}
+
+function scheduleNextNotif(time){
+  const[h,m]=time.split(':').map(Number);
+  const now=new Date();
+  const target=new Date(now);
+  target.setHours(h,m,0,0);
+  if(target<=now)target.setDate(target.getDate()+1);
+  const ms=target.getTime()-now.getTime();
+  setTimeout(()=>{
+    const due=getDue(CARDS).length;
+    if(Notification.permission==='granted'){
+      new Notification('🇪🇸 EspañolApp',{
+        body:due>0?`${due} cartes à réviser aujourd'hui !`:'Ouvre l\'app pour t\'entraîner ! 💪',
+        icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🇪🇸</text></svg>'
+      });
+    }
+    // Reschedule for tomorrow
+    const cfg=localStorage.getItem('notif_cfg');
+    if(cfg){const{time:t}=JSON.parse(cfg);scheduleNextNotif(t);}
+  },ms);
+}
+
+function checkScheduledNotif(){
+  const cfg=localStorage.getItem('notif_cfg');
+  if(cfg&&Notification.permission==='granted'){
+    const{time}=JSON.parse(cfg);scheduleNextNotif(time);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════════════════
+function setNav(id){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){showScreen('home');setNav('nav-home');renderStats();renderXP();renderChart();renderBadges();updateSRSBanner();}
+
+// ══════════════════════════════════════════════════════════════════
+// CUSTOM CARDS
+// ══════════════════════════════════════════════════════════════════
+let customCards=[];
+function loadCustomCards(){
+  const s=localStorage.getItem('custom3');if(s)customCards=JSON.parse(s);
+  customCards.forEach(c=>{if(!CARDS.find(x=>x.fr===c.fr&&x.es===c.es))CARDS.push(c);});
+}
+function saveCustomCards(){localStorage.setItem('custom3',JSON.stringify(customCards));}
+function saveNewCard(){
+  const fr=document.getElementById('new-fr').value.trim();
+  const es=document.getElementById('new-es').value.trim();
+  if(!fr||!es){showToast('⚠️ Remplis les deux champs !','#e05c5c');return;}
+  const c={cat:document.getElementById('new-cat').value,fr,es,
+    hint:document.getElementById('new-hint').value.trim(),
+    ex:document.getElementById('new-ex').value.trim(),custom:true};
+  customCards.push(c);CARDS.push(c);
+  saveCustomCards();updateCounts();clearForm();showToast('✓ Carte ajoutée !');
+}
+function clearForm(){['new-fr','new-es','new-hint','new-ex'].forEach(id=>document.getElementById(id).value='');}
+function deleteCustomCard(i){
+  const c=customCards[i];
+  const ci=CARDS.findIndex(x=>x.fr===c.fr&&x.es===c.es&&x.custom);
+  if(ci>-1)CARDS.splice(ci,1);
+  delete srsData[cKey(c)];customCards.splice(i,1);
+  saveCustomCards();saveSRS();updateCounts();renderManageList();showToast('🗑 Supprimée','#e05c5c');
+}
+function openManage(){showScreen('manage-cards');setNav('nav-add');renderManageList();}
+function renderManageList(){
+  const f=document.getElementById('manage-filter').value;
+  const list=document.getElementById('manage-list');
+  const arr=customCards.filter(c=>f==='all'||c.cat===f);
+  if(!arr.length){list.innerHTML='<div class="manage-empty">'+(customCards.length===0?'📭 Aucune carte personnelle.<br><br>Ajoute ta première carte !':'📭 Aucune carte dans cette catégorie.')+'</div>';return;}
+  const labs={vocab:'Vocab',phrases:'Phrases',verbs:'Verbes',expressions:'Expressions'};
+  list.innerHTML=arr.map(c=>{
+    const ri=customCards.indexOf(c);const d=srsData[cKey(c)];
+    const si=d?`Niv.${d.level||0} · dans ${fmtD(daysLeft(d))}`:'Jamais vue';
+    return`<div class="manage-card-item"><div class="manage-card-text">
+      <div class="manage-card-fr">${c.fr}</div>
+      <div class="manage-card-es">${c.es}</div>
+      <div class="manage-card-meta">${labs[c.cat]||c.cat}</div>
+      <div class="manage-card-srs">🧠 ${si}</div>
+    </div><button class="btn-delete" onclick="deleteCustomCard(${ri})">✕</button></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════
+function showToast(msg,col){
+  let t=document.getElementById('st');
+  if(!t){t=document.createElement('div');t.id='st';t.className='toast';document.body.appendChild(t);}
+  t.textContent=msg;t.style.background=col||'var(--green)';t.style.color=col?'#fff':'#0a1f12';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PWA
+// ══════════════════════════════════════════════════════════════════
+let dp;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;setTimeout(()=>document.getElementById('install-banner').classList.add('show'),3000);});
+document.getElementById('btn-install').addEventListener('click',async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;closeBanner();}});
+function closeBanner(){document.getElementById('install-banner').classList.remove('show');}
+
+// SWIPE
+let tx=0;
+document.getElementById('card-3d').addEventListener('touchstart',e=>{tx=e.changedTouches[0].screenX;},{passive:true});
+document.getElementById('card-3d').addEventListener('touchend',e=>{if(Math.abs(e.changedTouches[0].screenX-tx)<12)handleCardTap();});
+
+// ENTER key in type mode
+document.addEventListener('keydown',e=>{
+  if(S.mode==='type'&&e.key==='Enter'){
+    if(!S.typeAnswered)checkType();else answer(document.getElementById('type-input').className.includes('correct')?'good':'again');
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// BOOTSTRAP
+// ══════════════════════════════════════════════════════════════════
+loadTheme();init();
+</script>
+<script>
+const mf={name:"EspañolApp",short_name:"Español",description:"Flashcards espagnol B1-B2",start_url:"./",display:"standalone",background_color:"#0e0718",theme_color:"#1a0a2e",orientation:"portrait",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a0a2e'/%3E%3Ctext x='96' y='130' text-anchor='middle' font-size='100'%3E🇪🇸%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]};
+const mb=new Blob([JSON.stringify(mf)],{type:'application/json'});
+const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
+</script>
+</body>
+</html>
