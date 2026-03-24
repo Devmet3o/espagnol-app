@@ -2,12 +2,13 @@
 <html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>EspañolApp</title>
 <meta name="theme-color" content="#1a0a2e"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Español"/>
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -38,7 +39,7 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
 .theme-label{font-size:.7rem;color:var(--muted);font-weight:500;}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 max(8px,env(safe-area-inset-bottom));backdrop-filter:blur(12px);}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 4px max(16px,env(safe-area-inset-bottom));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;cursor:pointer;border:none;background:none;color:var(--muted);transition:all .2s;font-family:'DM Sans',sans-serif;}
 .nav-item.active{color:var(--accent);}
 .nav-item .nav-icon{font-size:1.3rem;}
@@ -100,7 +101,7 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
 .btn-secondary:hover{border-color:var(--accent);}
 
 /* QUIZ */
-#quiz{justify-content:space-between;padding-top:16px;padding-bottom:16px;}
+#quiz{justify-content:flex-start;padding-top:16px;padding-bottom:90px;gap:12px;}
 .quiz-header{width:100%;max-width:400px;display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .btn-back{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px 11px;font-size:.82rem;cursor:pointer;transition:all .18s;white-space:nowrap;}
 .btn-back:hover{border-color:var(--accent);}
@@ -114,7 +115,7 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
 .srs-indicator{position:absolute;top:13px;right:13px;display:flex;gap:3px;z-index:2;}
 .srs-dot{width:6px;height:6px;border-radius:99px;background:var(--border);transition:background .3s;}
 .srs-dot.filled{background:var(--accent);}
-.card-scene{width:100%;max-width:400px;flex:1;display:flex;align-items:center;justify-content:center;perspective:1200px;cursor:pointer;}
+.card-scene{width:100%;max-width:400px;display:flex;align-items:center;justify-content:center;perspective:1200px;cursor:pointer;}
 .card-3d{width:100%;max-width:360px;height:240px;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.2,.2,1);}
 .card-3d.flipped{transform:rotateY(180deg);}
 .card-face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;border:1px solid var(--border);box-shadow:var(--sh);}
@@ -138,7 +139,7 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
 .card-3d.halo-red   .card-front{box-shadow:0 0 0 3px rgba(224,92,92,.5),var(--sh);}
 
 /* MODE SWITCH */
-.mode-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:400px;margin-bottom:4px;}
+.mode-row{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:400px;margin-bottom:6px;}
 .mode-switch{display:flex;gap:5px;}
 .mode-switch button{background:none;border:1px solid var(--border);color:var(--muted);border-radius:99px;padding:3px 10px;font-size:.68rem;cursor:pointer;transition:all .18s;font-family:'DM Sans',sans-serif;}
 .mode-switch button.active{border-color:var(--accent);color:var(--accent);background:rgba(240,165,0,.07);}
@@ -147,7 +148,7 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
 /* ANSWER BUTTONS */
 .card-actions{width:100%;max-width:400px;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
 .card-actions.four-col{grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;}
-.btn-classic{padding:14px;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-classic{padding:18px 14px;border-radius:16px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .btn-dontknow{background:rgba(224,92,92,.12);color:var(--red);border:1px solid rgba(224,92,92,.25);}
 .btn-dontknow:hover{background:rgba(224,92,92,.22);transform:translateY(-2px);}
 .btn-know{background:rgba(78,203,113,.12);color:var(--green);border:1px solid rgba(78,203,113,.25);}
@@ -192,11 +193,6 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
 .result-btns{display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;}
 
 /* XP TOAST (badge earned) */
-.badge-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:linear-gradient(135deg,var(--surface),var(--card-bg));border:2px solid var(--accent);border-radius:20px;padding:16px 24px;z-index:300;transition:transform .4s cubic-bezier(.34,1.56,.64,1);text-align:center;box-shadow:0 8px 32px rgba(240,165,0,.3);min-width:220px;}
-.badge-toast.show{transform:translateX(-50%) translateY(0);}
-.badge-toast .bt-icon{font-size:2.2rem;}
-.badge-toast .bt-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--accent);margin-top:4px;}
-.badge-toast .bt-sub{font-size:.75rem;color:var(--muted);}
 
 /* NOTIF SCREEN */
 #notif-screen{justify-content:center;text-align:center;gap:20px;padding-bottom:80px;}
@@ -328,8 +324,8 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
   </div>
 
   <!-- Card -->
-  <div class="card-scene" id="card-scene" onclick="handleCardTap()">
-    <div class="card-3d" id="card-3d">
+  <div class="card-scene" id="card-scene">
+    <div class="card-3d" id="card-3d" onclick="handleCardTap()">
       <div class="card-face card-front">
         <div class="card-lang-tag" id="front-lang">Français</div>
         <div class="srs-indicator" id="srs-dots"></div>
@@ -348,7 +344,7 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
   </div>
 
   <!-- Answer zone -->
-  <div style="width:100%;max-width:400px;">
+  <div style="width:100%;max-width:400px;flex-shrink:0;">
     <div class="mode-row">
       <div class="mode-switch">
         <button id="btn-mode-flip" class="active" onclick="setMode('flip')">🔄 Cartes</button>
@@ -443,9 +439,6 @@ body::after{content:'';position:fixed;top:-20%;right:-10%;width:60vw;height:60vw
   <button class="nav-item" id="nav-notif" onclick="showScreen('notif-screen');setNav('nav-notif')"><span class="nav-icon">🔔</span><span class="nav-label">Rappel</span></button>
 </nav>
 
-<!-- Badge toast -->
-<div class="badge-toast" id="badge-toast">
-  <div class="bt-icon" id="bt-icon">🏆</div>
   <div class="bt-title" id="bt-title">Badge débloqué !</div>
   <div class="bt-sub" id="bt-sub"></div>
 </div>
@@ -667,14 +660,7 @@ function renderBadges(){
     </div>`;
   }).join('');
 }
-function showBadgeToast(icon,title,sub){
-  const t=document.getElementById('badge-toast');
-  document.getElementById('bt-icon').textContent=icon;
-  document.getElementById('bt-title').textContent=title;
-  document.getElementById('bt-sub').textContent=sub;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
-}
+function showBadgeToast(icon,title,sub){showToast(icon+' '+title+' – '+sub);}
 
 // ══════════════════════════════════════════════════════════════════
 // THEME
@@ -721,7 +707,7 @@ function setMode(m){
   document.getElementById('type-zone').style.display=m==='type'?'block':'none';
   document.getElementById('srs-btns').style.display=m==='srs'?'grid':'none';
   // card tappable only in flip/srs
-  document.getElementById('card-scene').style.cursor=m==='type'?'default':'pointer';
+  document.getElementById('card-3d').style.cursor=m==='type'?'default':'pointer';
   if(m==='type'){resetTypeZone();}
   if(m==='srs')updateIntervals();
 }
@@ -1080,9 +1066,44 @@ document.addEventListener('keydown',e=>{
 loadTheme();init();
 </script>
 <script>
-const mf={name:"EspañolApp",short_name:"Español",description:"Flashcards espagnol B1-B2",start_url:"./",display:"standalone",background_color:"#0e0718",theme_color:"#1a0a2e",orientation:"portrait",icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a0a2e'/%3E%3Ctext x='96' y='130' text-anchor='middle' font-size='100'%3E🇪🇸%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml"}]};
+const mf={
+  name:"EspañolApp – Flashcards Espagnol",
+  short_name:"Español",
+  description:"Apprends l'espagnol B1-B2 avec des flashcards SRS",
+  start_url:"./",
+  display:"standalone",
+  background_color:"#0e0718",
+  theme_color:"#1a0a2e",
+  orientation:"portrait-primary",
+  lang:"fr",
+  categories:["education"],
+  icons:[
+    {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%231a0a2e'/%3E%3Ctext x='96' y='130' text-anchor='middle' font-size='100'%3E🇪🇸%3C/text%3E%3C/svg%3E",sizes:"192x192",type:"image/svg+xml",purpose:"any maskable"},
+    {src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%231a0a2e'/%3E%3Ctext x='256' y='340' text-anchor='middle' font-size='260'%3E🇪🇸%3C/text%3E%3C/svg%3E",sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}
+  ]
+};
 const mb=new Blob([JSON.stringify(mf)],{type:'application/json'});
 const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(mb);document.head.appendChild(ml);
+</script>
+
+<script>
+// Service Worker for offline PWA
+if('serviceWorker' in navigator){
+  const swCode = `
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open('espanol-v1').then(c => c.addAll(['./', './index.html']))
+  );
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./index.html')))
+  );
+});
+  `;
+  const blob = new Blob([swCode], {type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
 </script>
 </body>
 </html>
